@@ -30,26 +30,37 @@ export default function App(){
 }
 
 function Accordion({data}){
+  const [currentNum,setCurrentNum]=useState(null);
+
+  function handleToggle(number){
+    if(currentNum!==number){ setCurrentNum(number); return; }
+    setCurrentNum(null);
+  }
+
   return (
     <div className="accordion">
-      {data.map((faq,index)=><AccordionItem key={index} number={index+1} title={faq.title} text={faq.text} />)}
+      {data.map((faq,index)=><AccordionItem key={index} currentNum={currentNum} number={index+1} title={faq.title} onToggle={handleToggle}>{faq.text}</AccordionItem>)}
+      <AccordionItem currentNum={currentNum} number={22} title='Test title' onToggle={handleToggle}>
+        <p>This is the test accordion item : </p>
+        <ul>
+          <li>Rendering using children</li>
+          <li>Will have to use the children prop</li>
+          <li>Obla dibla da yoohoo !</li>
+        </ul>
+      </AccordionItem>
     </div>
   );
 }
 
-function AccordionItem({number,title,text}){
-  const [isOpen,setIsOpen]=useState(false);
-
-  function handleToggle(){
-    setIsOpen(isOpen=>!isOpen);
-  }
+function AccordionItem({currentNum,number,title,onToggle,children}){
+  const isOpen=currentNum===number;
 
   return (
-    <div className={`item ${isOpen?'open':''}`} onClick={handleToggle}>
+    <div className={`item ${isOpen?'open':''}`} onClick={()=>onToggle(number)}>
       <p className="number">{number<9?`0${number}`:number}</p>
       <p className="title">{title}</p>
       <p className="icon">{isOpen?'-':'+'}</p>
-      {isOpen && <div className="content-box">{text}</div>}
+      {isOpen && <div className="content-box">{children}</div>}
     </div>
   );
 }
